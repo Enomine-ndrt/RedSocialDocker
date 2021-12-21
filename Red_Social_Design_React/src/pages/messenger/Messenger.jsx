@@ -17,6 +17,7 @@ export default function Messenger() {
     const [onlineUsers,setOnlineUsers] = useState([]);
     //const PF = "http://localhost:8800/images/";
     const base_url = "http://localhost:8800/api/";
+    
 
     const socket = useRef();
     const {user} = useContext(AuthContext);
@@ -41,7 +42,8 @@ export default function Messenger() {
     useEffect(() => {
         socket.current.emit("addUser",user._id);
         socket.current.on("getUsers",users=>{
-            setOnlineUsers(user.followings.filter((f)=>users.some((u)=>u.userId === f )))
+            setOnlineUsers(user.followings.filter((f)=>users.some((u)=>u.userId === f ))
+            );
         });
     },
     [user]);
@@ -49,7 +51,7 @@ export default function Messenger() {
     useEffect(()=>{
         const getConversations = async()=>{
             try{
-                const res = await axios.get(`${base_url}conversations/${user._id}`);
+                const res = await axios.get(base_url+"conversations/"+user._id);
                 setConversations(res.data);
             }catch(err){
                 console.log(err);
@@ -62,7 +64,7 @@ export default function Messenger() {
    useEffect(() => {
     const getMessages = async()=>{
         try{
-            const res = await axios.get(`${base_url}messages/${currentChat?._id}`);
+            const res = await axios.get(base_url+"messages/"+currentChat?._id);
             setMessages(res.data);
         }catch(err){
             console.log(err);
@@ -79,7 +81,7 @@ export default function Messenger() {
             conversationId:currentChat._id
         };
 
-        const receiverId = currentChat.members.find(member=>member !== user._id);
+        const receiverId = currentChat.members.find((member)=>member !== user._id);
 
             socket.current.emit("sendMessage",{
                 senderId: user._id,
@@ -87,7 +89,7 @@ export default function Messenger() {
                 text:newMessage,
             });
         try{
-            const res = await axios.post(`${base_url}messages`,message);
+            const res = await axios.post(base_url+"messages",message);
             setMessages([...messages,res.data]);
             setNewMessage("");
 
@@ -95,12 +97,6 @@ export default function Messenger() {
             console.log(err);
         }
    };
-
-   useEffect(() => {
-        socket.current.on("getMessage",data=>{
-
-        });
-   },[]);
 
    useEffect(() => {
         scrollRef.current?.scrollIntoView({behavior:"smooth"});
