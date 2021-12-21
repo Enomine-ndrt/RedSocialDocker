@@ -1,5 +1,5 @@
+setup:
 build:
   docker:
     web_server: RedSocial_Nodejs_Rest_Api/Dockerfile
     web_client: Red_Social_Design_React/Dockerfile
-    worker: RedSocial_Nodejs_Rest_Api/Dockerfile
