@@ -2,29 +2,28 @@ version: "3"
 
 services:
   nginx:
-    image: nginx
-    restart: always
-    build: ./nginx
     container_name: nginx
+    build: ./nginx
+    restart: always
     ports:
       - "80:80"
     depends_on:
       - client
-    links:
-      - client
     networks:
       - mern-app
+
   socket:
-    image: socket
     container_name: socket
     build: ./socket
     ports:
       - "8900:8900"
     networks:
       - mern-app
-    depends_on: [client, api]
+    depends_on:
+      - client
+      - api
+
   client:
-    image: client
     container_name: client
     build:
       context: ./Red_Social_Design_React
@@ -34,19 +33,18 @@ services:
       - mern-app
     depends_on:
       - api
-    links:
-      - api
+
   api:
-    image: api
     container_name: api
+    build:
+      context: ./RedSocial_Nodejs_Rest_Api
     ports:
       - "8800:8800"
     depends_on:
       - mongo
-    build:
-      context: ./RedSocial_Nodejs_Rest_Api
     networks:
       - mern-app
+
   mongo:
     container_name: mymongodatabase
     image: mongo
@@ -56,6 +54,8 @@ services:
       - mern-app
     logging:
       driver: none
+
 networks:
   mern-app:
     driver: bridge
+
